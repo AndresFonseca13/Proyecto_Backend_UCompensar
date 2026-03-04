@@ -1,0 +1,280 @@
+ INFORME COMPLETO DEL PROYECTO BACKEND
+                                                                                                                            
+  ---
+  ¿QUÉ ES EL PROYECTO?                                                                                                      
+                  
+  Un backend para una aplicación de marketplace de tecnología, similar a una red social donde usuarios pueden publicar
+  productos tecnológicos, dar likes y comentar publicaciones. Funciona como una API REST que puede conectarse a cualquier
+  frontend (web/móvil).
+
+  ---
+  TECNOLOGÍAS
+
+  ┌─────────────────┬─────────────────────────────────────┬─────────────┐
+  │    Categoría    │             Tecnología              │   Versión   │
+  ├─────────────────┼─────────────────────────────────────┼─────────────┤
+  │ Framework       │ NestJS                              │ 11.0.1      │
+  ├─────────────────┼─────────────────────────────────────┼─────────────┤
+  │ Lenguaje        │ TypeScript                          │ 5.7.3       │
+  ├─────────────────┼─────────────────────────────────────┼─────────────┤
+  │ Runtime         │ Node.js                             │ 20 (Alpine) │
+  ├─────────────────┼─────────────────────────────────────┼─────────────┤
+  │ Base de datos   │ PostgreSQL                          │ 15          │
+  ├─────────────────┼─────────────────────────────────────┼─────────────┤
+  │ ORM             │ Prisma                              │ 6.19.2      │
+  ├─────────────────┼─────────────────────────────────────┼─────────────┤
+  │ Autenticación   │ JWT + Passport                      │ jwt@11.0.2  │
+  ├─────────────────┼─────────────────────────────────────┼─────────────┤
+  │ Validación      │ class-validator / class-transformer │ 0.15.1      │
+  ├─────────────────┼─────────────────────────────────────┼─────────────┤
+  │ Documentación   │ Swagger/OpenAPI                     │ 11.2.6      │
+  ├─────────────────┼─────────────────────────────────────┼─────────────┤
+  │ Package manager │ pnpm                                │ —           │
+  ├─────────────────┼─────────────────────────────────────┼─────────────┤
+  │ Contenedores    │ Docker + docker-compose             │ —           │
+  └─────────────────┴─────────────────────────────────────┴─────────────┘
+
+  ---
+  TIPO DE ESTRUCTURA
+
+  Clean Architecture + Domain-Driven Design (DDD)
+
+  src/
+  ├── auth/              ← Autenticación JWT
+  ├── user/              ← Módulo usuarios
+  │   ├── domain/        ← Entidades + Repositorios (interfaces) + Value Objects
+  │   ├── infrastructure/ ← Implementación Prisma del repositorio
+  │   ├── use-cases/     ← Lógica de negocio
+  │   └── dto/           ← Validación de entrada
+  ├── publication/       ← Módulo publicaciones (misma estructura)
+  ├── like/              ← Módulo likes (misma estructura)
+  ├── comment/           ← Módulo comentarios (misma estructura)
+  └── prisma/            ← Servicio global de base de datos
+
+  Patrón por módulo:
+  Controller → Use Case → Repository Interface → Prisma Repository (infra)
+
+  ---
+  ENDPOINTS DISPONIBLES
+
+  AUTH (/auth)
+
+  ┌────────┬───────────────┬────────────────────────────────┬───────────┐
+  │ Método │     Ruta      │          Descripción           │ Protegido │
+  ├────────┼───────────────┼────────────────────────────────┼───────────┤
+  │ POST   │ /auth/login   │ Login, retorna JWT token       │ No        │
+  ├────────┼───────────────┼────────────────────────────────┼───────────┤
+  │ GET    │ /auth/profile │ Perfil del usuario autenticado │ ✅ JWT    │
+  └────────┴───────────────┴────────────────────────────────┴───────────┘
+
+  USERS (/users)
+
+  ┌────────┬────────────┬───────────────────────────┬───────────┐
+  │ Método │    Ruta    │        Descripción        │ Protegido │
+  ├────────┼────────────┼───────────────────────────┼───────────┤
+  │ GET    │ /users     │ Listar todos los usuarios │ ✅ JWT    │
+  ├────────┼────────────┼───────────────────────────┼───────────┤
+  │ GET    │ /users/:id │ Obtener usuario por ID    │ No        │
+  ├────────┼────────────┼───────────────────────────┼───────────┤
+  │ POST   │ /users     │ Crear usuario (registro)  │ No        │
+  ├────────┼────────────┼───────────────────────────┼───────────┤
+  │ PATCH  │ /users/:id │ Actualizar usuario        │ No        │
+  ├────────┼────────────┼───────────────────────────┼───────────┤
+  │ DELETE │ /users/:id │ Eliminar usuario          │ No        │
+  └────────┴────────────┴───────────────────────────┴───────────┘
+
+  PUBLICATIONS (/publication)
+
+  ┌────────┬──────────────────┬─────────────────────────────────────┬───────────┐
+  │ Método │       Ruta       │             Descripción             │ Protegido │
+  ├────────┼──────────────────┼─────────────────────────────────────┼───────────┤
+  │ GET    │ /publication     │ Listar todas / filtrar por ?userId= │ ✅ JWT    │
+  ├────────┼──────────────────┼─────────────────────────────────────┼───────────┤
+  │ GET    │ /publication/:id │ Obtener publicación por ID          │ No        │
+  ├────────┼──────────────────┼─────────────────────────────────────┼───────────┤
+  │ POST   │ /publication     │ Crear publicación                   │ No        │
+  ├────────┼──────────────────┼─────────────────────────────────────┼───────────┤
+  │ PATCH  │ /publication/:id │ Actualizar publicación              │ No        │
+  ├────────┼──────────────────┼─────────────────────────────────────┼───────────┤
+  │ DELETE │ /publication/:id │ Eliminar publicación                │ No        │
+  └────────┴──────────────────┴─────────────────────────────────────┴───────────┘
+
+  LIKES (/like)
+
+  ┌────────┬───────────┬───────────────────────────────────┬───────────┐
+  │ Método │   Ruta    │            Descripción            │ Protegido │
+  ├────────┼───────────┼───────────────────────────────────┼───────────┤
+  │ GET    │ /like     │ Obtener likes por ?publicationId= │ No        │
+  ├────────┼───────────┼───────────────────────────────────┼───────────┤
+  │ POST   │ /like     │ Crear like                        │ No        │
+  ├────────┼───────────┼───────────────────────────────────┼───────────┤
+  │ PATCH  │ /like/:id │ Actualizar like (toggle)          │ No        │
+  └────────┴───────────┴───────────────────────────────────┴───────────┘
+
+  COMMENTS (/comment)
+
+  ┌────────┬──────────────┬──────────────────────────────────────┬───────────┐
+  │ Método │     Ruta     │             Descripción              │ Protegido │
+  ├────────┼──────────────┼──────────────────────────────────────┼───────────┤
+  │ GET    │ /comment     │ Listar / filtrar por ?publicationId= │ ✅ JWT    │
+  ├────────┼──────────────┼──────────────────────────────────────┼───────────┤
+  │ GET    │ /comment/:id │ Obtener comentario por ID            │ No        │
+  ├────────┼──────────────┼──────────────────────────────────────┼───────────┤
+  │ POST   │ /comment     │ Crear comentario                     │ No        │
+  ├────────┼──────────────┼──────────────────────────────────────┼───────────┤
+  │ DELETE │ /comment/:id │ Eliminar comentario                  │ No        │
+  └────────┴──────────────┴──────────────────────────────────────┴───────────┘
+
+  Swagger UI disponible en: http://localhost:3000/api
+
+  ---
+  MANEJO DE SEGURIDAD
+
+  Lo que está implementado:
+
+  - JWT Bearer Token — Se envía en header: Authorization: Bearer <token>
+  - Token expira en 1 hora
+  - Payload del token: { name, email, sub: userId }
+  - AuthGuard protege rutas específicas
+
+  Cómo autenticarse desde el frontend:
+
+  1. POST /auth/login → { email, password } → recibe { access_token }
+  2. Guardar token en localStorage / cookie segura
+  3. Enviar en cada request protegida: Authorization: Bearer <token>
+
+  ⚠️  VULNERABILIDADES CRÍTICAS (pendientes de corregir):
+
+  ┌─────┬─────────────────────────────────────────┬─────────┐
+  │  #  │                Problema                 │ Riesgo  │
+  ├─────┼─────────────────────────────────────────┼─────────┤
+  │ 1   │ Contraseñas en texto plano (sin bcrypt) │ CRÍTICO │
+  ├─────┼─────────────────────────────────────────┼─────────┤
+  │ 2   │ JWT secret hardcodeado en contants.ts   │ ALTO    │
+  ├─────┼─────────────────────────────────────────┼─────────┤
+  │ 3   │ Mayoría de endpoints sin AuthGuard      │ MEDIO   │
+  ├─────┼─────────────────────────────────────────┼─────────┤
+  │ 4   │ Sin CORS configurado explícitamente     │ MEDIO   │
+  ├─────┼─────────────────────────────────────────┼─────────┤
+  │ 5   │ rol.vo.ts tiene error de sintaxis (if;) │ BUG     │
+  └─────┴─────────────────────────────────────────┴─────────┘
+
+  ---
+  ESQUEMA DE BASE DE DATOS
+
+  ┌─────────────────────────────────────────────────────────────────┐
+  │  User                      │  Publication                       │
+  │  ─────────────────────     │  ─────────────────────             │
+  │  id: UUID (PK)             │  id: UUID (PK)                     │
+  │  email: String (unique)    │  description: String               │
+  │  name: String              │  img: String (URL)                 │
+  │  password: String          │  price: Int                        │
+  │  rol: String               │  brandId: String                   │
+  │  photo: String             │  userId: UUID (FK → User)          │
+  │  description: String       │  createAt: DateTime                │
+  │  city: String              │                                    │
+  │  createdAt: DateTime       │                                    │
+  └──────────────┬─────────────┘                                    │
+                 │ 1:N                              N:1             │
+          ┌──────┴──────────────────────────────────┘
+          │
+          ▼
+  ┌─────────────────────────┐    ┌─────────────────────────────────┐
+  │  Like                   │    │  Comment                        │
+  │  ───────────────────    │    │  ────────────────────           │
+  │  id: UUID (PK)          │    │  id: UUID (PK)                  │
+  │  userId: UUID (FK)      │    │  content: String                │
+  │  publicationId: UUID    │    │  userId: UUID (FK → User)       │
+  │  Isliked: Boolean       │    │  publicationId: UUID (FK)       │
+  │  createdAt: DateTime    │    │  createdAt: DateTime            │
+  │  UNIQUE(userId, pubId)  │    │                                 │
+  └─────────────────────────┘    └─────────────────────────────────┘
+
+  ┌─────────────────────────┐
+  │  Brand                  │
+  │  ───────────────────    │
+  │  id: UUID (PK)          │
+  │  name: String (unique)  │
+  │  createAt: DateTime     │
+  └─────────────────────────┘
+
+  Relaciones:
+  - User → muchas Publication, Like, Comment
+  - Publication → muchos Like, Comment
+  - Publication → una Brand (via brandId)
+  - Cascade delete: al eliminar User → se eliminan sus publicaciones, likes y comentarios
+
+  ---
+  INFORMACIÓN IMPORTANTE PARA CONECTAR EL FRONTEND
+
+  Configuración base
+
+  Base URL:  http://localhost:3000
+  Puerto:    3000
+  Swagger:   http://localhost:3000/api
+  DB Port:   5436 (mapeado desde el contenedor)
+
+  DTOs para las requests
+
+  Registro de usuario POST /users:
+  {
+    "email": "user@example.com",
+    "name": "Juan Pérez",
+    "password": "123456",
+    "rol": "user",
+    "photo": "https://...",        // opcional
+    "description": "...",          // opcional
+    "city": "Bogotá"              // opcional
+  }
+
+  Login POST /auth/login:
+  { "email": "user@example.com", "password": "123456" }
+  Respuesta: { "access_token": "eyJhbG..." }
+
+  Crear publicación POST /publication:
+  {
+    "description": "iPhone 15 Pro",
+    "img": "https://...",
+    "price": 4500000,
+    "brandId": "uuid-de-la-marca",
+    "userId": "uuid-del-usuario"
+  }
+
+  Crear comentario POST /comment:
+  {
+    "content": "Excelente producto",
+    "userId": "uuid-usuario",
+    "publicationId": "uuid-publicacion"
+  }
+
+  Crear like POST /like:
+  {
+    "userId": "uuid-usuario",
+    "publicationId": "uuid-publicacion",
+    "Isliked": true
+  }
+
+  Query params disponibles
+
+  GET /publication?userId=<uuid>        → publicaciones de un usuario
+  GET /like?publicationId=<uuid>        → likes de una publicación
+  GET /comment?publicationId=<uuid>     → comentarios de una publicación
+
+  Levantar el proyecto
+
+  # Con Docker
+  docker-compose up -d          # levanta PostgreSQL
+
+  # Local
+  pnpm install
+  pnpm run start:dev            # modo desarrollo con hot-reload
+
+  ---
+  ISSUES PENDIENTES QUE AFECTAN AL FRONTEND
+
+  1. Sin paginación — los listados devuelven todos los registros
+  2. LikeModule comentado en app.module.ts — puede causar errores
+  3. Sin gestión de marcas (Brand) — no hay endpoints CRUD para brands
+  4. Inconsistencia en campos — campo se llama Isliked (con I mayúscula)
+  5. Sin manejo global de errores — respuestas de error inconsistentes
+  6. Sin rate limiting — vulnerable a abuso de endpoints

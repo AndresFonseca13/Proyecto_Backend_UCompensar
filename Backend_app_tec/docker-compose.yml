@@ -1,0 +1,16 @@
+services:
+  backend:
+    image: postgres:15
+    container_name: postgres_db_cars
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app_cars
+    ports:
+      - "5436:5432"
+    volumes:
+      - cars_volumen:/var/lib/postgresql/data
+
+volumes:
+  cars_volumen:
