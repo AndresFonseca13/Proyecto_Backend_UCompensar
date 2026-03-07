@@ -32,7 +32,7 @@ export class User {
       new Date(),
       data.description ?? null,
       data.city ?? null,
-      data.rol ?? null,
+      'user',
     );
   }
 

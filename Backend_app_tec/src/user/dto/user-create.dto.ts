@@ -19,10 +19,6 @@ export class CreateUserDto {
   @MinLength(6)
   password: string;
 
-  @IsString()
-  @IsNotEmpty()
-  rol: string;
-
   @IsOptional()
   @IsString()
   photo?: string;

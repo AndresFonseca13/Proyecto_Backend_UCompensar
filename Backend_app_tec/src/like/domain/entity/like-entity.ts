@@ -6,19 +6,17 @@ export class Like {
     public readonly publicationId: string,
     public readonly createdAt: Date,
   ) {}
-  static create(data: {
-    userId: string;
-    Isliked: boolean;
-    publicationId: string;
-  }): Like {
+
+  static create(data: { userId: string; publicationId: string }): Like {
     return new Like(
       crypto.randomUUID(),
       data.userId,
-      data.Isliked,
+      true,
       data.publicationId,
       new Date(),
     );
   }
+
   update(data: { Isliked?: boolean }): Like {
     return new Like(
       this.id,
@@ -28,7 +26,8 @@ export class Like {
       this.createdAt,
     );
   }
-  static persistence(data: {
+
+  static fromPersistence(data: {
     id: string;
     userId: string;
     Isliked: boolean;
@@ -36,11 +35,11 @@ export class Like {
     createdAt: Date;
   }): Like {
     return new Like(
-      crypto.randomUUID(),
+      data.id,
       data.userId,
       data.Isliked,
       data.publicationId,
-      new Date(),
+      data.createdAt,
     );
   }
 }

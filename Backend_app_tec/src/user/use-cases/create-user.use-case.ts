@@ -12,7 +12,6 @@ export class CreateUseCase {
     email: string;
     password: string;
     name: string;
-    rol: string;
     photo?: string;
     description?: string;
     city?: string;

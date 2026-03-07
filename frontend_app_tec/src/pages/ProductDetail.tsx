@@ -11,22 +11,21 @@ import {
 	ArrowLeft,
 } from "lucide-react";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import type { Publication, Like, Comment } from "../types";
-
-interface Props {
-	userId: string;
-	userName: string;
-	onLogout: () => void;
-}
 
 interface CommentWithUser extends Comment {
 	userName?: string;
 	userPhoto?: string;
 }
 
-const ProductDetail = ({ userId, userName, onLogout }: Props) => {
+const ProductDetail = () => {
 	const { id } = useParams<{ id: string }>();
+	const { user } = useAuth();
+	const userId = user?.id ?? "";
+	const userName = user?.name ?? "";
+
 	const [product, setProduct] = useState<Publication | null>(null);
 	const [likes, setLikes] = useState<Like[]>([]);
 	const [comments, setComments] = useState<CommentWithUser[]>([]);
@@ -81,25 +80,7 @@ const ProductDetail = ({ userId, userName, onLogout }: Props) => {
 	const handleToggleLike = async () => {
 		if (!id) return;
 		try {
-			const { data: allLikes } = await api
-				.get<Like[]>(`/like?publicationId=${id}`)
-				.catch(() => ({ data: [] as Like[] }));
-			const myLike = allLikes.find((l) => l.userId === userId);
-
-			if (isLikedByMe) {
-				if (myLike) {
-					await api.patch(`/like/${myLike.id}`, { Isliked: false });
-				}
-			} else if (myLike) {
-				await api.patch(`/like/${myLike.id}`, { Isliked: true });
-			} else {
-				await api.post("/like", {
-					userId,
-					publicationId: id,
-					Isliked: true,
-				});
-			}
-
+			await api.post("/like/toggle", { userId, publicationId: id });
 			const res = await api
 				.get<Like[]>(`/like?publicationId=${id}`)
 				.catch(() => ({ data: [] as Like[] }));
@@ -167,7 +148,7 @@ const ProductDetail = ({ userId, userName, onLogout }: Props) => {
 	if (loading) {
 		return (
 			<div className="min-h-screen bg-gray-50">
-				<Navbar userName={userName} onLogout={onLogout} />
+				<Navbar />
 				<div className="flex items-center justify-center py-32">
 					<Loader2 className="w-8 h-8 animate-spin text-gray-400" />
 				</div>
@@ -178,7 +159,7 @@ const ProductDetail = ({ userId, userName, onLogout }: Props) => {
 	if (!product) {
 		return (
 			<div className="min-h-screen bg-gray-50">
-				<Navbar userName={userName} onLogout={onLogout} />
+				<Navbar />
 				<div className="max-w-7xl mx-auto px-4 py-16 text-center">
 					<p className="text-gray-500 text-lg">Producto no encontrado</p>
 					<Link
@@ -197,7 +178,7 @@ const ProductDetail = ({ userId, userName, onLogout }: Props) => {
 
 	return (
 		<div className="min-h-screen bg-gray-50">
-			<Navbar userName={userName} onLogout={onLogout} />
+			<Navbar />
 
 			{/* Breadcrumb */}
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">

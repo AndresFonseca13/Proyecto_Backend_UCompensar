@@ -25,6 +25,7 @@ export class AuthService {
       id: string;
       name: string;
       email: string;
+      rol: string;
     };
   }> {
     const user = await this.users.getUserByEmail(email);
@@ -39,6 +40,7 @@ export class AuthService {
       name: user.name,
       email: user.email.getEmail(),
       sub: user.id,
+      rol: user.rol ?? 'user',
     };
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -46,6 +48,7 @@ export class AuthService {
         id: user.id || '',
         name: user.name,
         email: user.email.getEmail(),
+        rol: user.rol ?? 'user',
       },
     };
   }

@@ -10,14 +10,12 @@ import {
 	MapPin,
 } from "lucide-react";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 type AuthMode = "login" | "register";
 
-interface Props {
-	onLoginSuccess: () => void;
-}
-
-const Login = ({ onLoginSuccess }: Props) => {
+const Login = () => {
+	const { login } = useAuth();
 	const [mode, setMode] = useState<AuthMode>("login");
 	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -48,16 +46,11 @@ const Login = ({ onLoginSuccess }: Props) => {
 		setError("");
 
 		try {
-			if (mode === "login") {
-				const res = await api.post("/auth/login", { email, password });
-				localStorage.setItem("access_token", res.data.access_token);
-				onLoginSuccess();
-			} else {
+			if (mode === "register") {
 				await api.post("/users", { email, name, password, rol: "user", city });
-				const res = await api.post("/auth/login", { email, password });
-				localStorage.setItem("access_token", res.data.access_token);
-				onLoginSuccess();
 			}
+			const res = await api.post("/auth/login", { email, password });
+			login(res.data);
 		} catch (err: unknown) {
 			console.error("Auth error:", err);
 			setError(

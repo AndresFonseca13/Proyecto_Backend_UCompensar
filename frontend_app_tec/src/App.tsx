@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 import Login from "./components/Login";
 import CreateProduct from "./components/CreateProduct";
 import CreateBrand from "./components/CreateBrand";
@@ -9,30 +9,7 @@ import MyProducts from "./pages/MyProducts";
 import EditProduct from "./pages/EditProduct";
 
 function App() {
-	const [isAuthenticated, setIsAuthenticated] = useState(
-		() => !!localStorage.getItem("access_token"),
-	);
-
-	const parseToken = () => {
-		const token = localStorage.getItem("access_token");
-		if (!token) return { userId: "", userName: "" };
-		try {
-			const payload = JSON.parse(atob(token.split(".")[1]));
-			return {
-				userId: (payload.sub as string) ?? "",
-				userName: (payload.name as string) ?? "",
-			};
-		} catch {
-			return { userId: "", userName: "" };
-		}
-	};
-
-	const handleLogout = () => {
-		localStorage.removeItem("access_token");
-		setIsAuthenticated(false);
-	};
-
-	const { userId, userName } = parseToken();
+	const { isAuthenticated, isAdmin } = useAuth();
 
 	return (
 		<Routes>
@@ -42,7 +19,7 @@ function App() {
 					isAuthenticated ? (
 						<Navigate to="/catalog" replace />
 					) : (
-						<Login onLoginSuccess={() => setIsAuthenticated(true)} />
+						<Login />
 					)
 				}
 			/>
@@ -50,11 +27,7 @@ function App() {
 				path="/catalog"
 				element={
 					isAuthenticated ? (
-						<ProductCatalog
-							userId={userId}
-							userName={userName}
-							onLogout={handleLogout}
-						/>
+						<ProductCatalog />
 					) : (
 						<Navigate to="/" replace />
 					)
@@ -63,44 +36,48 @@ function App() {
 			<Route
 				path="/products/new"
 				element={
-					isAuthenticated ? (
-						<CreateProduct userId={userId} userName={userName} onLogout={handleLogout} />
-					) : (
+					!isAuthenticated ? (
 						<Navigate to="/" replace />
+					) : !isAdmin ? (
+						<Navigate to="/catalog" replace />
+					) : (
+						<CreateProduct />
 					)
 				}
 			/>
 			<Route
 				path="/brands/new"
 				element={
-					isAuthenticated ? (
-						<CreateBrand userName={userName} onLogout={handleLogout} />
-					) : (
+					!isAuthenticated ? (
 						<Navigate to="/" replace />
+					) : !isAdmin ? (
+						<Navigate to="/catalog" replace />
+					) : (
+						<CreateBrand />
 					)
 				}
 			/>
 			<Route
 				path="/my-products"
 				element={
-					isAuthenticated ? (
-						<MyProducts
-							userId={userId}
-							userName={userName}
-							onLogout={handleLogout}
-						/>
-					) : (
+					!isAuthenticated ? (
 						<Navigate to="/" replace />
+					) : !isAdmin ? (
+						<Navigate to="/catalog" replace />
+					) : (
+						<MyProducts />
 					)
 				}
 			/>
 			<Route
 				path="/products/:id/edit"
 				element={
-					isAuthenticated ? (
-						<EditProduct userName={userName} onLogout={handleLogout} />
-					) : (
+					!isAuthenticated ? (
 						<Navigate to="/" replace />
+					) : !isAdmin ? (
+						<Navigate to="/catalog" replace />
+					) : (
+						<EditProduct />
 					)
 				}
 			/>
@@ -108,11 +85,7 @@ function App() {
 				path="/products/:id"
 				element={
 					isAuthenticated ? (
-						<ProductDetail
-							userId={userId}
-							userName={userName}
-							onLogout={handleLogout}
-						/>
+						<ProductDetail />
 					) : (
 						<Navigate to="/" replace />
 					)

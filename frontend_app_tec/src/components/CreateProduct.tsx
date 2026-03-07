@@ -15,18 +15,16 @@ import {
 	X,
 } from "lucide-react";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import Navbar from "./Navbar";
 import type { Brand } from "../types";
 
-interface Props {
-	userId: string;
-	userName: string;
-	onLogout: () => void;
-}
-
-const CreateProduct = ({ userId, userName, onLogout }: Props) => {
+const CreateProduct = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { user } = useAuth();
+	const userId = user?.id ?? "";
+
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 	const [toast, setToast] = useState("");
@@ -94,7 +92,7 @@ const CreateProduct = ({ userId, userName, onLogout }: Props) => {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<Navbar userName={userName} onLogout={onLogout} />
+			<Navbar />
 			<div className="flex flex-1">
 			{/* Panel izquierdo */}
 			<div className="hidden lg:flex lg:w-[45%] bg-linear-to-br from-indigo-600 via-indigo-500 to-purple-500 flex-col items-center justify-center p-12 relative overflow-hidden">

@@ -55,7 +55,7 @@ export class UserPrismaRepository implements UserRepository {
         name: user.name,
         city: user.city ?? '',
         password: user.password.getPassword(),
-        rol: '',
+        rol: user.rol ?? 'user',
         photo: user.photo ?? '',
         description: user.description ?? '',
         createdAt: user.createdAt,

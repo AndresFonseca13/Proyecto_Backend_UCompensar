@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateLikeDto {
+export class ToggleLikeDto {
   @IsString()
   @IsNotEmpty()
   userId: string;

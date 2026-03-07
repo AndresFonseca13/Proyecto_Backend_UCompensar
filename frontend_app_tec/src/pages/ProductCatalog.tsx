@@ -3,18 +3,16 @@ import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, Loader2, PackageX, CheckCircle, X } from "lucide-react";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
-import type { Publication, PublicationWithMeta, Like, Brand } from "../types";
+import type { Publication, PublicationWithMeta, Brand } from "../types";
 
-interface Props {
-	userId: string;
-	userName: string;
-	onLogout: () => void;
-}
-
-const ProductCatalog = ({ userId, userName, onLogout }: Props) => {
+const ProductCatalog = () => {
 	const location = useLocation();
+	const { user } = useAuth();
+	const userId = user?.id ?? "";
+
 	const [products, setProducts] = useState<PublicationWithMeta[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [search, setSearch] = useState("");
@@ -76,24 +74,7 @@ const ProductCatalog = ({ userId, userName, onLogout }: Props) => {
 		);
 
 		try {
-			const { data: allLikes }: { data: Like[] } = await api.get(
-				`/like?publicationId=${publicationId}`,
-			);
-			const myLike = allLikes.find((l) => l.userId === userId);
-
-			if (product.isLikedByMe) {
-				if (myLike) {
-					await api.patch(`/like/${myLike.id}`, { Isliked: false });
-				}
-			} else if (myLike) {
-				await api.patch(`/like/${myLike.id}`, { Isliked: true });
-			} else {
-				await api.post("/like", {
-					userId,
-					publicationId,
-					Isliked: true,
-				});
-			}
+			await api.post("/like/toggle", { userId, publicationId });
 		} catch (err) {
 			console.error("Error toggling like:", err);
 			setProducts((prev) =>
@@ -122,7 +103,7 @@ const ProductCatalog = ({ userId, userName, onLogout }: Props) => {
 
 	return (
 		<div className="min-h-screen bg-gray-50">
-			<Navbar userName={userName} onLogout={onLogout} />
+			<Navbar />
 
 			<AnimatePresence>
 				{toast && (

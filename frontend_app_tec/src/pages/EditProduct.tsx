@@ -19,12 +19,7 @@ import api from "../services/api";
 import Navbar from "../components/Navbar";
 import type { Publication, Brand } from "../types";
 
-interface Props {
-	userName: string;
-	onLogout: () => void;
-}
-
-const EditProduct = ({ userName, onLogout }: Props) => {
+const EditProduct = () => {
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 
@@ -149,7 +144,7 @@ const EditProduct = ({ userName, onLogout }: Props) => {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<Navbar userName={userName} onLogout={onLogout} />
+			<Navbar />
 			<div className="flex flex-1">
 			{/* Panel izquierdo */}
 			<div className="hidden lg:flex lg:w-[45%] bg-linear-to-br from-indigo-600 via-indigo-500 to-purple-500 flex-col items-center justify-center p-12 relative overflow-hidden">

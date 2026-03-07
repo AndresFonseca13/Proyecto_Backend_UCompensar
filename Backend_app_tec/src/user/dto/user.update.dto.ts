@@ -15,10 +15,6 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsString()
-  rol?: string;
-
-  @IsOptional()
-  @IsString()
   photo?: string;
 
   @IsOptional()

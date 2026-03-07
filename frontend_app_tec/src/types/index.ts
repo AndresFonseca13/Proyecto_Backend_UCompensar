@@ -1,3 +1,12 @@
+export type UserRole = "admin" | "user";
+
+export interface AuthUser {
+	id: string;
+	name: string;
+	email: string;
+	rol: UserRole;
+}
+
 export interface Brand {
 	id: string;
 	name: string;

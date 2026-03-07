@@ -5,4 +5,9 @@ export interface LikeRepository {
   createLike(data: Like): Promise<Like>;
   updateLike(id: string, data: Partial<Like>): Promise<Like>;
   getLike(id: string): Promise<Like | null>;
+  findByUserAndPublication(
+    userId: string,
+    publicationId: string,
+  ): Promise<Like | null>;
+  deleteLike(id: string): Promise<void>;
 }

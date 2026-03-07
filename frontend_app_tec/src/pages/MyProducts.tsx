@@ -3,18 +3,16 @@ import { motion, AnimatePresence } from "motion/react";
 import { Loader2, PackageX, Plus } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import api from "../services/api";
+import { useAuth } from "../context/AuthContext";
 import ProductCard from "../components/ProductCard";
 import Navbar from "../components/Navbar";
 import type { Publication, PublicationWithMeta } from "../types";
 
-interface Props {
-	userId: string;
-	userName: string;
-	onLogout: () => void;
-}
-
-const MyProducts = ({ userId, userName, onLogout }: Props) => {
+const MyProducts = () => {
 	const location = useLocation();
+	const { user } = useAuth();
+	const userId = user?.id ?? "";
+
 	const [products, setProducts] = useState<PublicationWithMeta[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [toast, setToast] = useState("");
@@ -55,7 +53,7 @@ const MyProducts = ({ userId, userName, onLogout }: Props) => {
 
 	return (
 		<div className="min-h-screen bg-gray-50">
-			<Navbar userName={userName} onLogout={onLogout} />
+			<Navbar />
 
 			<AnimatePresence>
 				{toast && (

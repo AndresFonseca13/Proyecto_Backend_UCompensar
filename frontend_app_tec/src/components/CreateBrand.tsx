@@ -5,12 +5,7 @@ import { Tag, ShoppingBag } from "lucide-react";
 import api from "../services/api";
 import Navbar from "./Navbar";
 
-interface Props {
-	userName: string;
-	onLogout: () => void;
-}
-
-const CreateBrand = ({ userName, onLogout }: Props) => {
+const CreateBrand = () => {
 	const navigate = useNavigate();
 	const [name, setName] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -39,7 +34,7 @@ const CreateBrand = ({ userName, onLogout }: Props) => {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<Navbar userName={userName} onLogout={onLogout} />
+			<Navbar />
 			<div className="flex flex-1">
 			{/* Panel izquierdo */}
 			<div className="hidden lg:flex lg:w-[45%] bg-linear-to-br from-indigo-600 via-indigo-500 to-purple-500 flex-col items-center justify-center p-12 relative overflow-hidden">
