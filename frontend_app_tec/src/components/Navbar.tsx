@@ -44,11 +44,13 @@ const Navbar = () => {
 						<NavLink to="/catalog" className={linkClass}>
 							Catálogo
 						</NavLink>
+						{/*
 						{isAdmin && (
-							<NavLink to="/brands/new" className={linkClass}>
-								Marcas
-							</NavLink>
-						)}
+  						<NavLink to="/brands/new" className={linkClass}>
+    						Marcas
+ 							</NavLink>
+							)}
+						*/}
 					</div>
 
 					{/* Right side */}
@@ -91,6 +93,13 @@ const Navbar = () => {
 										<div className="my-1 border-t border-gray-100" />
 									</>
 								)}
+								<button
+											onClick={() => navigate("/brands/new")}
+											className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+										>
+											Marcas
+										</button>
+										<div className="my-1 border-t border-gray-100" />
 								<button
 									onClick={logout}
 									className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
